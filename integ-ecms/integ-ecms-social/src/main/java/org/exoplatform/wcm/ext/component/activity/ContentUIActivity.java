@@ -35,11 +35,14 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.friendly.FriendlyService;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
+import org.exoplatform.social.webui.Utils;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.webui.application.WebuiRequestContext;
@@ -265,10 +268,9 @@ public class ContentUIActivity extends BaseUIActivity {
   }
 
   public String getUserProfileUri(String userId) {
-    ExoContainer container = ExoContainerContext.getCurrentContainer();
-    IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
-    
-    return identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, true).getProfile().getUrl();
+    Identity identity = Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
+    if(identity.isDeleted()) return "#";
+    return LinkProvider.getUserProfileUri(userId);
   }
 
   public String getUserAvatarImageSource(String userId) {

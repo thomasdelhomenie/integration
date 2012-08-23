@@ -125,10 +125,18 @@
   activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
 
   def ownerIdentity = uicomponent.ownerIdentity;
+  def clzz = "";
+  
   if (uicomponent.isUserActivity()) {
     ownerUri = LinkProvider.getUserProfileUri(ownerIdentity.getRemoteId());
     ownerAvatar = ownerIdentity.profile.avatarUrl;
     ownerName = ownerIdentity.profile.fullName;
+    if(ownerIdentity.isDeleted()) {
+      clzz = "DeletedUser";
+      ownerUri = "#";  
+    } else {
+      clzz = "Text";
+    }
     if (!ownerAvatar) ownerAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
   } else {
     Space space = Utils.getSpaceService().getSpaceByName(ownerIdentity.remoteId);
@@ -162,7 +170,7 @@
     <div class="ContentBox" id="ContextBox${activity.id}">
       <div id="ActivityContextBox${activity.id}">
       <h5 class="TitleContent ClearFix">
-        <div class="Text">
+        <div class="$clzz">
           <h5><a title="$ownerName" href="$ownerUri">$ownerName</a></h5>
         </div>
       <% if (activityDeletable) {%>
@@ -239,7 +247,7 @@
             displayedIdentityLikes.each({
               def id = Utils.getIdentityManager().getIdentity(it);
               personLikeFullName = id.profile.fullName;
-              personLikeProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
+              personLikeProfileUri = uicomponent.getUserProfileUri(id.remoteId);
               personLikeAvatarImageSource = id.profile.avatarUrl;
               if (!personLikeAvatarImageSource) personLikeAvatarImageSource = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
               %>
@@ -288,7 +296,7 @@
     }
     def id = Utils.getIdentityManager().getIdentity(it.userId);
     commenterFullName = id.profile.fullName;
-    commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
+    commenterProfileUri = uicomponent.getUserProfileUri(id.remoteId);
     commentMessage = it.title;
     commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
     commenterAvatarImgSrc = id.profile.avatarUrl;
@@ -305,9 +313,13 @@
         <span class="BorderBottomCM"></span>
       </a>
       <div class="ContentBox">
+      <% if(commenterProfileUri != "#") { %>
         <h5>
           <a href="$commenterProfileUri">$commenterFullName</a>
         </h5>
+	    <% } else { %>
+	        <h5><span class="DeletedUser">$commenterFullName<span></h5>
+	    <% } %>
         <p class="ContentBlock">  
             $commentMessage
         </p>

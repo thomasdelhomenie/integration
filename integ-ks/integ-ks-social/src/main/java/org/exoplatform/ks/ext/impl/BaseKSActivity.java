@@ -20,8 +20,12 @@ import java.util.Map;
 
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.webui.Utils;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 
 /**
@@ -51,7 +55,9 @@ public class BaseKSActivity extends BaseUIActivity {
   }
 
   public String getUserProfileUri(String userId) {
-    return getOwnerIdentity().getProfile().getUrl();
+    Identity identity = Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
+    if(identity.isDeleted()) return "#";
+    return LinkProvider.getUserProfileUri(userId);
   }
 
   public String getUserAvatarImageSource(String userId) {
