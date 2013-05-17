@@ -1,6 +1,9 @@
 package org.exoplatform.ks.ext.impl;
 
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -40,7 +43,16 @@ public class WikiUIActivity extends BaseKSActivity {
   }
 
   String getPageURL() {
-    return getActivityParamValue(WikiSpaceActivityPublisher.URL_KEY);
+	  String pageUrl = getActivityParamValue(WikiSpaceActivityPublisher.URL_KEY);{
+		  if(pageUrl != null){
+			  try{
+				  URL oldURL = new URL(pageUrl);
+				  pageUrl = oldURL.getPath();
+			  }catch (MalformedURLException ex) {
+			  }
+		  }
+	  }
+	  return pageUrl;
   }
   
   String getViewChangeURL(){
