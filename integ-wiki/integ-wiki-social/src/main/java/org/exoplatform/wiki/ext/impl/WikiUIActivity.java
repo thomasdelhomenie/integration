@@ -114,6 +114,19 @@ public class WikiUIActivity extends BaseUIActivity {
   String getViewChangeURL(){
     return getActivityParamValue(WikiSpaceActivityPublisher.VIEW_CHANGE_URL_KEY);
   }
+  String getVerName(){
+  	String url = getActivityParamValue(WikiSpaceActivityPublisher.VIEW_CHANGE_URL_KEY);
+  	StringBuilder sb = new StringBuilder();
+  	for (int i = url.length() - 1; i >= 0; i --) {
+  	    char c = url.charAt(i);
+  	    if (Character.isDigit(c)) {
+  	        sb.insert(0, c);
+  	    } else {
+  	        break;
+  	    }
+  	}
+  	return sb.toString();
+  }
   
   String getPageExcerpt(){
     return getActivityParamValue(WikiSpaceActivityPublisher.PAGE_EXCERPT);
@@ -143,5 +156,8 @@ public class WikiUIActivity extends BaseUIActivity {
       }
     }
     return version;
+  }
+  String getWikiActivityType(){
+  	return getActivityParamValue(WikiSpaceActivityPublisher.ACTIVITY_TYPE_KEY);
   }
 }
