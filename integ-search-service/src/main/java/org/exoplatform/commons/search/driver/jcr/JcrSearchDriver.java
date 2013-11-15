@@ -75,8 +75,8 @@ public class JcrSearchDriver extends SearchService {
 
   private static String getFuzzySyntax() {
     String fuzzySyntax = "";
-    String fuzzyEnable = System.getProperty("fuzzy_enable");
-    String fuzzyDistance = System.getProperty("fuzzy_distance");
+    String fuzzyEnable = System.getProperty("unified-search.engine.fuzzy.enable");
+    String fuzzyDistance = System.getProperty("unified-search.engine.fuzzy.distance");
     if ((fuzzyEnable!=null && Boolean.parseBoolean(fuzzyEnable)==true)
         || fuzzyEnable==null){
       fuzzySyntax = "~" + (fuzzyDistance == null? "":fuzzyDistance); 
