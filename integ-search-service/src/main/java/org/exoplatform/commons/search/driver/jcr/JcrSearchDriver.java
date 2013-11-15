@@ -19,11 +19,12 @@ import org.exoplatform.services.log.Log;
 
 public class JcrSearchDriver extends SearchService {
   private final static Log LOG = ExoLogger.getLogger(JcrSearchDriver.class);
-  
+
   @Override
   public Map<String, Collection<SearchResult>> search(SearchContext context, String query, Collection<String> sites, Collection<String> types, int offset, int limit, String sort, String order) {
+    String fuzzySyntax = getFuzzySyntax();
     HashMap<String, ArrayList<String>> terms = parse(query); //parse query for single and quoted terms
-    query = repeat("\"%s\"", terms.get("quoted"), " ") + " " + repeat("%s~", terms.get("single"), " "); //add a ~ after each single term (for fuzzy search)
+    query = repeat("\"%s\"", terms.get("quoted"), " ") + " " + repeat("%s" + fuzzySyntax, terms.get("single"), " "); //add a fuzzySyntax after each single term (for fuzzy search)
 
     Map<String, Collection<SearchResult>> results = new HashMap<String, Collection<SearchResult>>();
     if(null==types || types.isEmpty()) return results;
@@ -42,10 +43,10 @@ public class JcrSearchDriver extends SearchService {
     return results;    
   }
 
-  
+
   private static HashMap<String, ArrayList<String>> parse(String input) {
     HashMap<String, ArrayList<String>> terms = new HashMap<String, ArrayList<String>>();
-    
+
     ArrayList<String> quoted = new ArrayList<String>();    
     Matcher matcher = Pattern.compile("\"([^\"]+)\"").matcher(input);
     while (matcher.find()) {
@@ -53,15 +54,15 @@ public class JcrSearchDriver extends SearchService {
       quoted.add(founds);
     }
     terms.put("quoted", quoted);
-    
+
     String remain = matcher.replaceAll("").replaceAll("\"", "").trim(); //remove all remaining double quotes
     ArrayList<String> single = new ArrayList<String>();
     if(!remain.isEmpty()) single.addAll(Arrays.asList(remain.split("\\s+")));
     terms.put("single", single);
-    
+
     return terms;
   }
-  
+
   private static String repeat(String format, Collection<String> strArr, String delimiter){
     StringBuilder sb=new StringBuilder();
     String delim = "";
@@ -71,5 +72,16 @@ public class JcrSearchDriver extends SearchService {
     }
     return sb.toString();
   }
+
+  private static String getFuzzySyntax() {
+    String fuzzySyntax = "";
+    String fuzzyEnable = System.getProperty("fuzzy_enable");
+    String fuzzyDistance = System.getProperty("fuzzy_distance");
+    if ((fuzzyEnable!=null && Boolean.parseBoolean(fuzzyEnable)==true)
+        || fuzzyEnable==null){
+      fuzzySyntax = "~" + (fuzzyDistance == null? "":fuzzyDistance); 
+    }
+    return fuzzySyntax;
+  }  
 
 }
