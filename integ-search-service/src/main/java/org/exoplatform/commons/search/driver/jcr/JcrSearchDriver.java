@@ -1,5 +1,13 @@
 package org.exoplatform.commons.search.driver.jcr;
 
+import org.exoplatform.commons.api.search.SearchService;
+import org.exoplatform.commons.api.search.SearchServiceConnector;
+import org.exoplatform.commons.api.search.data.SearchContext;
+import org.exoplatform.commons.api.search.data.SearchResult;
+import org.exoplatform.commons.search.service.UnifiedSearchService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,14 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.exoplatform.commons.api.search.SearchService;
-import org.exoplatform.commons.api.search.SearchServiceConnector;
-import org.exoplatform.commons.api.search.data.SearchContext;
-import org.exoplatform.commons.api.search.data.SearchResult;
-import org.exoplatform.commons.search.service.UnifiedSearchService;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 
 public class JcrSearchDriver extends SearchService {
   private final static Log LOG = ExoLogger.getLogger(JcrSearchDriver.class);
@@ -76,10 +76,21 @@ public class JcrSearchDriver extends SearchService {
   private static String getFuzzySyntax() {
     String fuzzySyntax = "";
     String fuzzyEnable = System.getProperty("unified-search.engine.fuzzy.enable");
-    String fuzzyDistance = System.getProperty("unified-search.engine.fuzzy.distance");
+    String fuzzySimilarity = System.getProperty("unified-search.engine.fuzzy.similarity");
+	  Double fuzzySimilarityDouble = 0.5;
     if ((fuzzyEnable!=null && Boolean.parseBoolean(fuzzyEnable)==true)
         || fuzzyEnable==null){
-      fuzzySyntax = "~" + (fuzzyDistance == null? "":fuzzyDistance); 
+	    if (fuzzySimilarity != null) {
+		    try {
+			    fuzzySimilarityDouble = Double.parseDouble(fuzzySimilarity);
+		    } catch (NumberFormatException e) {
+			    fuzzySimilarityDouble = 0.5;
+		    }
+	    }
+	    if (fuzzySimilarityDouble < 0 || fuzzySimilarityDouble >= 1) {
+		    fuzzySimilarityDouble = 0.5;
+	    }
+      fuzzySyntax = "~" + String.valueOf(fuzzySimilarityDouble);
     }
     return fuzzySyntax;
   }  
