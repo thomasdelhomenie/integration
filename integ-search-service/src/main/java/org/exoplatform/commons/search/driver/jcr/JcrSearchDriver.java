@@ -67,19 +67,30 @@ public class JcrSearchDriver extends SearchService {
     StringBuilder sb=new StringBuilder();
     String delim = "";
     for(String str:strArr) {
-      sb.append(delim).append(String.format(format, str));
-      delim = delimiter;
-    }
+      if (!isEnableFuzzySearch()){
+        String disableFuzzy = str.replace("~", "\\~");
+        sb.append(delim).append(disableFuzzy);
+        delim = delimiter;        
+      } else if (!isFuzzyManual(str) && str.indexOf("~") != -1) {
+        str = str.replace(str.substring(str.indexOf("~")), "~0.5");
+        sb.append(delim).append(str);
+        delim = delimiter;        
+      }else if (!isFuzzyManual(str) && isEnableFuzzySearch()){
+        sb.append(delim).append(String.format(format, str));
+        delim = delimiter;        
+      }else {
+        sb.append(delim).append(str);
+        delim = delimiter;
+      }
+    }    
     return sb.toString();
   }
 
   private static String getFuzzySyntax() {
     String fuzzySyntax = "";
-    String fuzzyEnable = System.getProperty("unified-search.engine.fuzzy.enable");
     String fuzzySimilarity = System.getProperty("unified-search.engine.fuzzy.similarity");
 	  Double fuzzySimilarityDouble = 0.5;
-    if ((fuzzyEnable!=null && Boolean.parseBoolean(fuzzyEnable)==true)
-        || fuzzyEnable==null){
+    if (isEnableFuzzySearch()){
 	    if (fuzzySimilarity != null) {
 		    try {
 			    fuzzySimilarityDouble = Double.parseDouble(fuzzySimilarity);
@@ -94,5 +105,23 @@ public class JcrSearchDriver extends SearchService {
     }
     return fuzzySyntax;
   }  
+  
+  private static boolean isFuzzyManual(String input) {
+    Matcher matcher = Pattern.compile(".[~][0]([\\.][0-9])").matcher(input);
+    while (matcher.find()){
+      return true;
+    }    
+    return false;
+  }
+  
+  private static boolean isEnableFuzzySearch(){
+    String fuzzyEnable = System.getProperty("unified-search.engine.fuzzy.enable");
+
+    if ((fuzzyEnable!=null && Boolean.parseBoolean(fuzzyEnable)==true)
+        || fuzzyEnable==null)
+      return true;
+    
+    return false;
+  }
 
 }
