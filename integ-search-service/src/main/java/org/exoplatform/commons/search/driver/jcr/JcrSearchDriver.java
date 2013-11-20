@@ -68,7 +68,7 @@ public class JcrSearchDriver extends SearchService {
     String delim = "";
     for(String str:strArr) {
       if (!isEnableFuzzySearch()){
-        String disableFuzzy = str.replace("~", "\\~");
+        String disableFuzzy = str.replace("~", "");
         sb.append(delim).append(disableFuzzy);
         delim = delimiter;        
       } else if (!isFuzzyManual(str) && str.indexOf("~") != -1) {
