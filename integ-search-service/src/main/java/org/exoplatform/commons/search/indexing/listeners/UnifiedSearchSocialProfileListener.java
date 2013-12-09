@@ -2,7 +2,6 @@ package org.exoplatform.commons.search.indexing.listeners;
 
 import org.exoplatform.commons.api.indexing.IndexingService;
 import org.exoplatform.commons.api.indexing.data.SearchEntryId;
-import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
@@ -23,12 +22,8 @@ public class UnifiedSearchSocialProfileListener extends ProfileListenerPlugin {
 
   private final IndexingService indexingService;
 
-  public UnifiedSearchSocialProfileListener() {
-    indexingService = (IndexingService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IndexingService.class);
-
-    if(indexingService == null) {
-      log.warn("No IndexingService found, data will not be indexed for the search");
-    }
+  public UnifiedSearchSocialProfileListener(IndexingService indexingService) {
+    this.indexingService = indexingService;
   }
 
   @Override

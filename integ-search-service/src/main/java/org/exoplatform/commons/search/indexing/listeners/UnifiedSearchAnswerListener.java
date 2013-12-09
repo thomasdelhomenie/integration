@@ -3,7 +3,6 @@ package org.exoplatform.commons.search.indexing.listeners;
 import org.exoplatform.commons.api.indexing.IndexingService;
 import org.exoplatform.commons.api.indexing.data.SearchEntry;
 import org.exoplatform.commons.api.indexing.data.SearchEntryId;
-import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Answer;
 import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.FAQService;
@@ -28,13 +27,9 @@ public class UnifiedSearchAnswerListener extends AnswerEventListener {
   private final IndexingService indexingService;
   private final FAQService faqService;
 
-  public UnifiedSearchAnswerListener() {
-    indexingService = (IndexingService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IndexingService.class);
-    faqService = (FAQService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(FAQService.class);
-
-    if(indexingService == null) {
-      log.warn("No IndexingService found, data will not be indexed for the search");
-    }
+  public UnifiedSearchAnswerListener(IndexingService indexingService, FAQService faqService) {
+    this.indexingService = indexingService;
+    this.faqService = faqService;
   }
 
   @Override

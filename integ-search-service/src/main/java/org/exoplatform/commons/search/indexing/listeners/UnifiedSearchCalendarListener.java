@@ -5,7 +5,6 @@ import org.exoplatform.calendar.service.impl.CalendarEventListener;
 import org.exoplatform.commons.api.indexing.IndexingService;
 import org.exoplatform.commons.api.indexing.data.SearchEntry;
 import org.exoplatform.commons.api.indexing.data.SearchEntryId;
-import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
@@ -26,12 +25,8 @@ public class UnifiedSearchCalendarListener extends CalendarEventListener {
 
   private final IndexingService indexingService;
 
-  public UnifiedSearchCalendarListener() {
-    indexingService = (IndexingService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IndexingService.class);
-
-    if(indexingService == null) {
-      log.warn("No IndexingService found, data will not be indexed for the search");
-    }
+  public UnifiedSearchCalendarListener(IndexingService indexingService) {
+    this.indexingService = indexingService;
   }
 
   @Override

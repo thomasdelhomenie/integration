@@ -3,7 +3,6 @@ package org.exoplatform.commons.search.indexing.listeners;
 import org.exoplatform.commons.api.indexing.IndexingService;
 import org.exoplatform.commons.api.indexing.data.SearchEntry;
 import org.exoplatform.commons.api.indexing.data.SearchEntryId;
-import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.space.SpaceListenerPlugin;
@@ -24,12 +23,8 @@ public class UnifiedSearchSocialSpaceListener extends SpaceListenerPlugin {
 
   private final IndexingService indexingService;
 
-  public UnifiedSearchSocialSpaceListener() {
-    indexingService = (IndexingService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IndexingService.class);
-
-    if(indexingService == null) {
-      log.warn("No IndexingService found, data will not be indexed for the search");
-    }
+  public UnifiedSearchSocialSpaceListener(IndexingService indexingService) {
+    this.indexingService = indexingService;
   }
 
   @Override
