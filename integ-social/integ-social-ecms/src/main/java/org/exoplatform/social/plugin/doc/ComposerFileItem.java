@@ -133,14 +133,6 @@ public class ComposerFileItem implements Serializable, Comparable<ComposerFileIt
   }
 
   @Override
-  public int hashCode() {
-    if (StringUtils.isBlank(title)) {
-      return super.hashCode();
-    }
-    return title.hashCode();
-  }
-
-  @Override
   public int compareTo(ComposerFileItem o) {
     return (int) (getIndice() - o.getIndice());
   }
