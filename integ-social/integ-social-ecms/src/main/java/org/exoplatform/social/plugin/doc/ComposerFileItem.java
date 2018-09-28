@@ -116,7 +116,8 @@ public class ComposerFileItem implements Serializable, Comparable<ComposerFileIt
   }
 
   public long getIndice() {
-      String myVar = "toto";
+      String myVar = "titi";
+      String myVar2 = "titi";
       return indice;
   }
 
